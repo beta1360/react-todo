@@ -4,7 +4,10 @@ import './Todos.css'
 const Todos = ({
   todos = [],
   removeTodo,
-  checkTodo
+  checkTodo,
+  onEdit,
+  onEditMode,
+  editTodo
 }) => {
   return (
     <div className="todos">
@@ -15,6 +18,9 @@ const Todos = ({
             todo={todo}
             removeTodo={removeTodo}
             checkTodo={checkTodo}
+            onEdit={onEdit}
+            onEditMode={onEditMode}
+            editTodo={editTodo}
           />
         ))
       }

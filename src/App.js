@@ -8,6 +8,7 @@ const defaultTodos = JSON.parse(localStorage.getItem('todos')) || []
 function App() {
   const [todos, setTodos] = useState(defaultTodos)
   const [input, setInput] = useState('')
+  const [onEdit, setOnEdit] = useState(false)
 
   const removeTodo = useCallback((id) => {
     const newTodos = todos.filter(todo => todo.id !== id)
@@ -27,7 +28,8 @@ function App() {
       {
         label: input,
         id: new Date(),
-        checked: false
+        checked: false,
+        isEdit: false
       }
     ]
     setTodos(newTodos)
@@ -47,12 +49,31 @@ function App() {
 		localStorage.setItem('todos', convertedTodos)
 	}, [todos])
 
+	const onEditMode = (id) => {
+		const newTodos = todos.map((todo) => ({
+			...todo,
+			isEdit: todo.id === id
+		}))
+		setTodos(newTodos)
+		setOnEdit(true)
+	}
+
+	const editTodo = (todo, label) => {
+		if (!onEdit) return
+		const newTodos = todos.map((item) => {
+			return todo.id === item.id ? { ...todo, label } : item
+		})
+		setTodos(newTodos)
+		setOnEdit(false)
+	}
+
   return (
     <div className="app">
       <h1>Marco Todos</h1>
       <button
         className="all-delete-btn"
-        onClick={deleteAllTodos}  
+        onClick={deleteAllTodos}
+        disabled={onEdit}
       >
         All Delete
       </button>
@@ -60,10 +81,14 @@ function App() {
         todos={todos}
         removeTodo={removeTodo}
         checkTodo={checkTodo}
+        onEdit={onEdit}
+        onEditMode={onEditMode}
+        editTodo={editTodo}
       />
       <form
         className="add-todo-form"
         onSubmit={addTodo}
+        disabled={onEdit}
       >
         <input
           className="add-todo-input"
@@ -73,7 +98,8 @@ function App() {
         />
         <button
           className="add-todo-btn"
-          onClick={addTodo}  
+          onClick={addTodo}
+          disabled={onEdit}
         >+</button>
       </form>
     </div>
